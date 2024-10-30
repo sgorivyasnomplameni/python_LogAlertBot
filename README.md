@@ -14,8 +14,8 @@ Welcome to the Log Analysis Telegram Bot! 🚀 This bot is designed to help you 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/sgorivyasnomplameni/python_LogAlertBot_forVK.git
-   cd python_LogAlertBot_forVK
+   git clone https://github.com/sgorivyasnomplameni/python_LogAlertBot.git
+   cd python_LogAlertBot
 
 :sun_with_face:
 # Телеграм-бот для анализа логов 🇷🇺
@@ -33,6 +33,6 @@ Welcome to the Log Analysis Telegram Bot! 🚀 This bot is designed to help you 
 
 1. Клонируйте репозиторий:
    ```bash
-   git clone https://github.com/sgorivyasnomplameni/python_LogAlertBot_forVK.git
-   cd python_LogAlertBot_forVK
+   git clone https://github.com/sgorivyasnomplameni/python_LogAlertBot.git
+   cd python_LogAlertBot
 
