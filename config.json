@@ -1,0 +1,6 @@
+{
+    "log_patterns": [
+        "INFsafaO.*",
+        "DEBUG.*"
+    ]
+}
