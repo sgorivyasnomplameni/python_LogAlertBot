@@ -1,3 +1,4 @@
+from loguru import logger
 import aiofiles
 import os
 import json
@@ -14,7 +15,7 @@ from os import getenv
 from html import escape
 
 API_TOKEN = getenv("BOT_TOKEN")  
-
+logger.add("logs.log", rotation="1 week", retention="1 month", compression="zip", format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}")
 
 dp = Dispatcher()
 
@@ -138,7 +139,7 @@ async def handle_document(message: Message) -> None:
     await message.answer("Загрузка файла лога. Пожалуйста, подождите...")  
     user_id = message.from_user.id
     chat_id = message.chat.id
-    logging.info(f"Получен user_id: {user_id} и chat_id: {chat_id} при загрузке файла: {message.document.file_name}")
+    logger.info(f"Получен user_id: {user_id} и chat_id: {chat_id} при загрузке файла: {message.document.file_name}")
 
     file_name = f'logs_{user_id}.log'  
     file_path = os.path.join('logs', file_name)
@@ -149,11 +150,11 @@ async def handle_document(message: Message) -> None:
 
         if os.path.exists(file_path):
             await message.answer("✅ Логи успешно обновлены.")
-            logging.info(f"Файл загружен по пути: {file_path}")
+            logger.info(f"Файл загружен по пути: {file_path}")
         else:
             await message.answer("❌ Ошибка: файл не был загружен.")
     except Exception as e:
-        logging.error(f"Ошибка при загрузке файла: {e}")
+        logger.error(f"Ошибка при загрузке файла: {e}")
         await message.answer("🚫 Произошла ошибка при загрузке файла. Пожалуйста, попробуйте еще раз.")
 
 @dp.message(lambda message: message.document and message.document.file_name.endswith('.json'))
@@ -168,11 +169,11 @@ async def handle_patterns_upload(message: Message) -> None:
 
         if os.path.exists(file_path):
             await message.answer("Шаблоны успешно загружены.")
-            logging.info(f"Шаблоны загружены по пути: {file_path}")
+            logger.info(f"Шаблоны загружены по пути: {file_path}")
         else:
             await message.answer("Ошибка: файл не был загружен.")
     except Exception as e:
-        logging.error(f"Ошибка при загрузке шаблонов: {e}")
+        logger.error(f"Ошибка при загрузке шаблонов: {e}")
         await message.answer("Произошла ошибка при загрузке шаблонов. Пожалуйста, попробуйте еще раз.")
 
 async def load_default_files(callback_query: CallbackQuery) -> None:
@@ -211,10 +212,10 @@ async def set_default_patterns(callback_query: CallbackQuery) -> None:
 async def test_logs_command(callback_query: CallbackQuery) -> None:
     user_id = callback_query.from_user.id
     log_file_path = os.path.join('logs', f'logs_{user_id}.log')
-    logging.info(f"Проверка существования файла: {log_file_path}")
+    logger.info(f"Проверка существования файла: {log_file_path}")
 
     if os.path.exists(log_file_path):
-        logging.info(f"Файл найден: {log_file_path}")
+        logger.info(f"Файл найден: {log_file_path}")
         logs = await read_log_file(log_file_path)
         patterns = await read_user_config(user_id)
         filtered_logs = await filter_logs(logs, patterns)
@@ -264,7 +265,7 @@ async def read_log_file(log_file_path: str) -> str:
             content = await log_file.read()
         return content
     except Exception as e:
-        logging.error(f"Ошибка при чтении лог файла: {e}")
+        logger.error(f"Ошибка при чтении лог файла: {e}")
         return ""
 
 async def read_user_config(user_id: int) -> list:
@@ -296,5 +297,6 @@ async def main() -> None:
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    logger.remove()
+    logger.add(sys.stdout, format="{time} {level} {message}", level="INFO")
     asyncio.run(main())
